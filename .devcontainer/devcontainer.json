@@ -1,0 +1,43 @@
+{
+  "name": "24h_clock",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "remoteUser": "node",
+  "features": {},
+
+  // Next.js dev server
+  "forwardPorts": [3000],
+  "portsAttributes": {
+    "3000": { "label": "Next.js" }
+  },
+
+  // 便利オプション
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "bradlc.vscode-tailwindcss",
+        "streetsidesoftware.code-spell-checker"
+      ],
+      "settings": {
+        "editor.formatOnSave": true,
+        "files.eol": "\n",
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+      }
+    }
+  },
+
+  // npm キャッシュやビルドキャッシュをホスト側に
+  "mounts": [
+    "type=volume,source=vscode-node-npm-cache,target=/home/node/.npm",
+    "type=volume,source=vscode-node-cache,target=/home/node/.cache"
+  ],
+
+  // 既に package.json があれば依存を入れる
+  "postCreateCommand": "bash -lc 'if [ -f package.json ]; then npm ci || npm install; fi'",
+
+  // Node のプロセスを正しく終了させる
+  "runArgs": ["--init"]
+}
