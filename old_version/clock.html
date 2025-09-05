@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ル・マン時計2016</title>
+<link rel="stylesheet" href="normalize.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+<link href="https://fonts.googleapis.com/css?family=Droid+Sans+Mono|Prompt" rel="stylesheet">
+<link rel="shortcut icon" href="24h_lemans.png" type="image/png" />
+<link rel="icon" href="24h_lemans.png" type="image/png" />
+<style>
+@media screen and (max-width: 768px) {
+ .misc_font, misc_font_2x{
+  font-size:3.6vw;
+ }
+ .title_font, .title_font_2x{
+  font-size:7.2vw;
+ }
+}
+@media screen and (min-width: 769px) and (max-width: 992px) {
+ .misc_font {
+  font-size:1.8vw;
+ }
+ .misc_font_2x {
+  font-size:3.6vw;
+ }
+ .title_font {
+  font-size:3.6vw;
+ }
+ .title_font_2x {
+  font-size:7.2vw;
+ }
+}
+@media screen and (min-width: 993px) and (max-width: 1200px) {
+ .misc_font{
+  font-size:1.8vw;
+ }
+ .misc_font_2x {
+  font-size:3.6vw;
+ }
+ .title_font {
+  font-size:3.6vw;
+ }
+ .title_font_2x {
+  font-size:7.2vw;
+ }
+}
+@media screen and (min-width: 1200px) {
+ .misc_font{
+  font-size:1.8vw;
+ }
+ .misc_font_2x {
+  font-size:3.6vw;
+ }
+ .title_font {
+  font-size:3.6vw;
+ }
+ .title_font_2x {
+  font-size:7.2vw;
+ }
+}
+.misc_font, .misc_font_2x {
+ color:rgb(0,68,103);
+ font-family: 'Prompt', sans-serif;
+}
+.title_font, .title_font_2x {
+ color:rgb(0,68,103);
+ font-weight:bold;
+ font-family: 'Prompt', sans-serif;
+}
+.font_fixed {
+ color:rgb(0,68,103);
+ font-family: 'Droid Sans Mono', monospace;
+ font-kerning: none;
+}
+/*
+(DIV).fixed_aspect_rate_XXX_outerと、(DIV).fixed_aspect_rate_XXX_innerで、特定のエリアのアスペクトレートを固定する
+外側のDIVのpaddingの%が、横に対する縦の割合(4:3にするなら75%)
+内側のDIVのheight,widthは基本100%とするが、余白がほしいなら程よく調整する
+(枠は4:3だが、中身は1:1にしたい場合とか)
+*/
+.fixed_aspect_rate_bar_outer{
+ position: relative;
+ width: 100%;
+ height: 100%;
+ padding: 7% 0 0;
+}
+@media screen and (max-aspect-ratio: 118/90) {
+/*縦長～少し横長4/3画面 118/90にしてるのは境界の問題で。*/
+ .fixed_aspect_rate_square_outer{
+  position: relative;
+  width: 100%;
+  height: 100%;
+  padding: 100% 0 0;
+ }
+ .fixed_aspect_rate_square_inner{
+  position: absolute;
+  top: 0;
+  left: 0%;
+  width: 100%;
+  height: 100%;
+ }
+}
+
+@media screen and (min-aspect-ratio: 118/90) and (max-aspect-ratio: 162/90) {
+/*4/3～16/9画面 118/90 162/90にしてるのは境界の問題で。*/
+ .fixed_aspect_rate_square_outer{
+  position: relative;
+  width: 100%;
+  height: 100%;
+  padding: 58% 0 0;
+ }
+ .fixed_aspect_rate_square_inner{
+  position: absolute;
+  top: 0;
+  left: 21%;
+  width: 58%;
+  height: 100%;
+ }
+}
+@media screen and (min-aspect-ratio: 162/90) {
+/*16/9よりワイドな画面  162/90にしてるのは境界の問題で。*/
+ .fixed_aspect_rate_square_outer{
+  position: relative;
+  width: 100%;
+  height: 100%;
+  padding: 40% 0 0;
+ }
+ .fixed_aspect_rate_square_inner{
+  position: absolute;
+  top: 0;
+  left: 30%;
+  width: 40%;
+  height: 100%;
+ }
+}
+.fixed_aspect_rate_inner{
+ position: absolute;
+ top: 0;
+ left: 0;
+ width: 100%;
+ height: 100%;
+}
+.clock_title_flex {
+ font-weight:bold;
+ font-size:40pt;
+}
+.clock_area_flex {
+ border-width:3px;
+ border-style:solid;
+ border-color:#f8f8f8;
+ background-color:#fff;
+}
+canvas.analogclock_flex {
+ width: 96%;
+ height: 96%;
+ margin-top: 2%;
+ margin-bottom: 2%;
+}
+canvas.bar_flex {
+ width: 96%;
+ height: 100%;
+ margin-top: 0;
+ margin-bottom: 0;
+ margin-left: auto;
+ margin-right: auto;
+ border-style:none solid;
+ border-width:0.1em;
+ border-color:rgb(197,0,63);
+}
+.logo {
+ display:inline;
+ vertical-align:bottom;
+ height:1.4em;
+ width:auto;
+/*
+ border-style:solid;
+ border-width:1px;
+ border-color:#ffffff;
+*/
+}
+body {
+ background-color:#f8f8f8;
+}
+</style>
+</head>
+<body class="misc-font">
+<div class="container-fluid">
+
+<div class="row">
+
+<div class="clock_area_flex col-sm-12 misc_font_2x">
+<div class="row title_font_2x font_fixed"><div class="col-xs-2"><img src="24h_lemans.png" class="logo"/></div><div class="col-xs-8 text-center" id="clock_race1_i"></div></div>
+<div class="row"><div class="fixed_aspect_rate_bar_outer"><div class="fixed_aspect_rate_inner"><canvas id="clock_race1_b" class="center-block bar_flex autosize2"></canvas></canvas></div></div></div>
+<!--<div class="row"><div class="fixed_aspect_rate_square_outer"><div class="fixed_aspect_rate_square_inner"><canvas id="clock_race1" class="center-block analogclock_flex autosize2"></canvas></div></div></div>-->
+</div><!--col-->
+
+<div class="clock_area_flex col-sm-6 misc_font">
+<div class="row"><div class="col-xs-12"><span><span class="title_font">le mans </span><span>CEST+0200</span></span></div></div>
+<div class="row"><div class="fixed_aspect_rate_bar_outer"><div class="fixed_aspect_rate_inner"><canvas id="clock_lemans1_b" class="center-block bar_flex autosize2"></canvas></div></div></div>
+<div class="row"><div class="fixed_aspect_rate_square_outer"><div class="fixed_aspect_rate_square_inner"><canvas id="clock_lemans1" class="center-block analogclock_flex autosize2"></canvas></div></div></div>
+</div><!--col-->
+
+<div class="clock_area_flex col-sm-6 misc_font">
+<div class="row"><div class="col-xs-12"><span><span class="title_font">tokyo </span><span>JST+0900</span></span></div></div>
+<div class="row"><div class="fixed_aspect_rate_bar_outer"><div class="fixed_aspect_rate_inner"><canvas id="clock_tokyo1_b" class="center-block bar_flex autosize2"></canvas></canvas></div></div></div>
+<div class="row"><div class="fixed_aspect_rate_square_outer"><div class="fixed_aspect_rate_square_inner"><canvas id="clock_tokyo1" class="center-block analogclock_flex autosize2"></canvas></div></div></div>
+</div><!--col-->
+
+</div><!--row-->
+
+</div><!--container-->
+<script>
+function controller(cfg){
+	this.timerId = null;
+	this.datetime = new Date(0);
+	this.tzoffset = ('tzoffset' in cfg)?cfg.tzoffset:-new Date().getTimezoneOffset();
+	this.delay = ('delay' in cfg)?cfg.delay:0;
+	this.analog = ('analog' in cfg)?new (function(){
+		this.id=cfg.analog;
+		this.init=function(){
+			this.canvas = document.getElementById(this.id);
+			this.seconds = ('analog_seconds' in cfg)?cfg.analog_seconds:true;
+			this.resolution = ('analog_resolution' in cfg)?cfg.analog_resolution:"seconds";
+			this.ctx = this.canvas.getContext('2d');
+			this.width = this.canvas.width;
+			this.height = this.canvas.height;
+			
+			var x = this.ctx;
+			x.translate(this.width / 2, this.height / 2); 
+			x.scale(this.width / 200, this.height / 200); 
+			x.rotate(-Math.PI/2); 
+			x.strokeStyle = "rgb(0,68,103)"; 
+			x.fillStyle = "white"; 
+			x.lineCap = "butt";  
+		}
+		this.memoriM=function(){
+			var x = this.ctx;
+			x.save();
+			x.lineWidth = 2; 
+			for (var i = 0; i < 60; i++) { 
+				x.beginPath(); 
+				x.rotate(Math.PI/30); 
+				x.moveTo(95,0); 
+				x.lineTo(100,0); 
+				x.stroke(); 
+			} 
+			x.restore();
+		}
+		this.memoriH=function(){
+			var x = this.ctx;
+			x.save();
+			x.lineWidth = 6; 
+			for (var i = 0; i < 12; i++) { 
+				x.beginPath(); 
+				x.rotate(Math.PI/6); 
+				x.moveTo(i==11?85:90,0); 
+				x.lineTo(100,0); 
+				x.stroke(); 
+			} 
+			x.restore();
+		}
+		this.h=function(){
+			var x = this.ctx;
+			x.save();
+			x.lineCap = "round";  
+			x.rotate(Math.PI/6 * (this.datetime.getHours() + this.datetime.getMinutes() / 60)); 
+			x.lineWidth = 8; 
+			x.beginPath(); 
+			x.moveTo(-6, 0); 
+			x.lineTo(60, 0); 
+			x.stroke(); 
+			x.restore();
+		}
+		this.m=function(){
+			var x = this.ctx;
+			x.save();
+			x.lineCap = "round";  
+			x.globalCompositeOperation = 'destination-out';//いったん透明に戻す
+			x.strokeStyle = "rgba(0,0,0,1)"; 
+			if(this.resolution=="minutes") {
+				x.rotate(Math.PI/30 * (this.datetime.getMinutes())); 
+			}
+			else {
+				x.rotate(Math.PI/30 * (this.datetime.getMinutes() + this.datetime.getSeconds() / 60)); 
+			}
+			x.lineWidth = 6; 
+			x.beginPath(); 
+			x.moveTo(-7, 0); 
+			x.lineTo(94, 0); 
+			x.stroke(); 
+			x.restore();
+			if(!this.seconds){
+				x.save();
+				x.globalCompositeOperation = 'destination-out';//いったん透明に戻す
+				x.fillStyle = "rgba(0,0,0,1)"; 
+				x.lineWidth = 0;
+				x.beginPath(); 
+				x.arc(0, 0, 5.5, 0, Math.PI*2); 
+				x.fill(); 
+				x.restore();
+			}
+			x.save();
+			x.lineCap = "round";  
+			if(this.resolution=="minutes") {
+				x.rotate(Math.PI/30 * (this.datetime.getMinutes())); 
+			}
+			else {
+				x.rotate(Math.PI/30 * (this.datetime.getMinutes() + this.datetime.getSeconds() / 60)); 
+			}
+			x.lineWidth = 5; 
+			x.beginPath(); 
+			x.moveTo(-7, 0); 
+			x.lineTo(94, 0); 
+			x.stroke(); 
+			x.restore();
+			if(!this.seconds){
+				x.save();
+				x.fillStyle = "rgb(0,68,103)"; 
+				x.beginPath(); 
+				x.arc(0, 0, 5, 0, Math.PI*2); 
+				x.fill(); 
+				x.restore();
+			}
+		}
+		this.s=function(){
+			var x = this.ctx;
+			x.save();
+			x.lineCap = "round";  
+			x.globalCompositeOperation = 'destination-out';//いったん透明に戻す
+			x.strokeStyle = "rgba(0,0,0,1)"; 
+			x.rotate(Math.PI/30 * this.datetime.getSeconds()); 
+			x.lineWidth = 4; 
+			x.beginPath(); 
+			x.moveTo(-10, 0); 
+			x.lineTo(85, 0); 
+			x.stroke(); 
+			x.restore();
+			x.save();
+			x.globalCompositeOperation = 'destination-out';//いったん透明に戻す
+			x.fillStyle = "rgba(0,0,0,1)"; 
+			x.beginPath(); 
+			x.arc(0, 0, 5.5, 0, Math.PI*2); 
+			x.fill(); 
+			x.restore();
+			x.save();
+			x.lineCap = "round";  
+			x.strokeStyle = "rgb(197,0,63)"; 
+			x.rotate(Math.PI/30 * this.datetime.getSeconds()); 
+			x.lineWidth = 3; 
+			x.beginPath(); 
+			x.moveTo(-10, 0); 
+			x.lineTo(85, 0); 
+			x.stroke(); 
+			x.restore();
+			x.save();
+			x.fillStyle = "rgb(197,0,63)"; 
+			x.beginPath(); 
+			x.arc(0, 0, 5, 0, Math.PI*2); 
+			x.fill(); 
+			x.restore();
+		}
+		this.ticktack=function(datetime) {
+			this.datetime=datetime;
+			if (!this.canvas) {
+				this.init();
+			}
+			var x = this.ctx;
+			x.clearRect(-100,-100,200,200);
+			this.memoriM();
+			this.memoriH();
+			this.h();
+			this.m();
+			if(this.seconds) {
+				this.s();
+			}
+		}
+	})():null;
+	this.digital=('digital' in cfg)?new (function(){
+		this.id=cfg.digital;
+		this.element=document.getElementById(this.id);
+		this.countdown=null;
+		if('countdown' in cfg){
+			var dy=Number(cfg.countdown.substring( 0, 4));
+			var dm=Number(cfg.countdown.substring( 4, 6)-1);
+			var dd=Number(cfg.countdown.substring( 6, 8));
+			var th=Number(cfg.countdown.substring( 8,10));
+			var tm=Number(cfg.countdown.substring(10,12));
+			this.countdown=new Date(dy,dm,dd,th,tm);
+		}
+		this.ticktack=function(datetime) {
+			var ms=datetime.getMilliseconds();
+			var colon=(ms<500)?":":" ";
+			var diff=this.countdown.getTime()/1000-datetime/1000;
+			if(diff>0) {
+				var d2=Math.ceil(diff);
+				var h=Math.floor(d2/60/60);
+				var m=Math.floor(d2/60)%60;
+				var s=Math.floor(d2)%60;
+				this.element.textContent="-"+h+colon+("00"+m).slice(-2)+colon+("00"+s).slice(-2);
+			}
+			else {
+				this.element.textContent=("00"+datetime.getHours()).slice(-2)+colon+("00"+datetime.getMinutes()).slice(-2)+colon+("00"+datetime.getSeconds()).slice(-2);
+			}
+		}
+	})():null;
+	this.bar=('bar' in cfg)?new (function(){
+		this.id=cfg.bar;
+		this.canvas = document.getElementById(this.id);
+		this.ctx = this.canvas.getContext('2d');
+		this.sunrise=('sunrise' in cfg)?(Number(cfg.sunrise.substring(0,2))*60+Number(cfg.sunrise.substring(2,4))):null;
+		this.sunset =('sunset'  in cfg)?(Number(cfg.sunset .substring(0,2))*60+Number(cfg.sunset .substring(2,4))):null;
+		var colorunknown="rgb(192,192,192)";
+		var colornoon="rgb(255,223,0)";
+		var colornight="rgb(54,38,112)";
+		var colorarrow="rgb(236,0,152)";
+		this.ticktack=function(datetime) {
+			var canvas=this.canvas;
+			var x=this.ctx;
+			var h1=Math.floor(canvas.height/3);//丸めないとアンチエイリアスでちょっと微妙になるので
+			var h2=canvas.height-h1;
+			var xrise=this.sunrise?this.sunrise*canvas.width/1440:null;
+			var xset=this.sunrise?this.sunset*canvas.width/1440:null;
+			x.clearRect(0,0,canvas.width,canvas.height);
+			var xnow=(datetime.getHours()*60+datetime.getMinutes()+datetime.getSeconds()/60)*canvas.width/1440;
+			if(xrise==null || xset==null){
+				x.strokeStyle=colorunknown;
+				x.fillStyle=colorunknown;
+			}
+			else if(xrise<xset){
+				x.strokeStyle=colornight;
+				x.fillStyle=colornight;
+			}
+			else {
+				x.strokeStyle=colornoon;
+				x.fillStyle=colornoon;
+			}
+			x.fillRect(0,h1,canvas.width,canvas.height-h1);
+			if(xrise && xset) {
+				if(xrise<xset){
+					x.strokeStyle=colornoon;
+					x.fillStyle=colornoon;
+				}
+				else {
+					x.strokeStyle=colornight;
+					x.fillStyle=colornight;
+				}
+				x.fillRect(xrise,h1,xset-xrise,canvas.height-h1);
+			}
+			//矢印が画面の端に行った時に反対側から出てくるように描画
+			[xnow-canvas.width,xnow,xnow+canvas.width].forEach(function(xn,idx,ar){
+				x.save();
+				x.strokeStyle=colorarrow;
+				x.fillStyle=colorarrow;
+				x.shadowColor="rgba(255,255,255,0.9)";
+				x.shadowBlur=h1*0.2;
+				x.shadowOffsetX=0;
+				x.shadowOffsetY=h1/4;
+				x.beginPath();
+				x.moveTo(xn-h1,0);
+				x.lineTo(xn,h2);
+				x.lineTo(xn+h1,0);
+				x.lineTo(xn-h1,0);
+				x.fill();
+/*
+				x.strokeStyle='rgb(255,255,255)';
+				x.moveTo(xn-h1,0);
+				x.lineTo(xn,h2);
+				x.lineTo(xn+h1,0);
+				x.stroke();
+*/
+				x.restore();
+			});
+		}
+	})():null;
+
+	this.ticktack = function(){
+		var lasttime=this.datetime;
+		var machine_tzoffset = -new Date().getTimezoneOffset();
+		//時差をちょろまかしつつ現在時刻を取得
+		this.datetime = new Date(new Date().getTime()+(this.tzoffset-machine_tzoffset)*60000-(this.delay)*1000);
+		//時間が変わっていなければ再描画しない
+		var lt=lasttime.getTime();
+		var nt=this.datetime.getTime();
+		if (Math.floor(nt/500)!=Math.floor(lt/500)) {
+			//デジタルは500ミリ秒単位(コロンの点滅用)
+			if(this.digital) this.digital.ticktack(this.datetime);
+		}
+		if (Math.floor(nt/1000)!=Math.floor(lt/1000)) {
+			//アナログは1秒単位
+			if(this.analog ) this.analog .ticktack(this.datetime);
+		}
+		if (Math.floor(nt/10000)!=Math.floor(lt/10000)) {
+			//バーは10秒単位
+			if(this.bar    ) this.bar    .ticktack(this.datetime);
+		}
+	}
+	this.start = function(){
+		if (!this.timerId) {
+			var _clock = this;
+//			_clock.ticktack();
+			this.timerId = setInterval(function(){_clock.ticktack();}, 50);//1000ミリ秒は信じられないのでそれなりに細かいタイマー
+		}
+	}
+	this.stop = function() {
+		if (this.timerId) {
+			clearInterval(this.timerId);
+			this.timerId = null;
+		}
+		if(this.analog ) this.analog .canvas=null;
+		this.datetime=new Date(0);
+	}
+	this.reset = function() {
+		if(this.analog ) this.analog .canvas=null;
+		this.datetime=new Date(0);
+	}
+}
+
+window.addEventListener('DOMContentLoaded',function(){
+
+  var streaming_delay=64;
+  var lemans_tzoffset=2*60;
+  var race_tzoffset=lemans_tzoffset-15*60;
+
+  var controllers=[];
+
+  controllers.push(new controller({
+    tzoffset:race_tzoffset,
+    delay:streaming_delay,
+//    analog:'clock_race1',
+//    analog_seconds:true,
+    digital:'clock_race1_i',
+    countdown:"201606180000",
+    bar:'clock_race1_b',
+    sunrise:"1459",
+    sunset:"0701",
+  }));
+  controllers.push(new controller({
+    tzoffset:lemans_tzoffset,
+    delay:streaming_delay,
+    analog:'clock_lemans1',
+//    analog_seconds:false,
+//    analog_resolution:"minutes",
+    bar:'clock_lemans1_b',
+    sunrise:"0559",
+    sunset:"2201",
+  }));
+  controllers.push(new controller({
+    analog:'clock_tokyo1',
+//    analog_seconds:false,
+//    analog_resolution:"minutes",
+    bar:'clock_tokyo1_b',
+    sunrise:"0425",
+    sunset:"1900",
+  }));
+
+  window.addEventListener("resize",function() {
+    autosize2();
+    controllers.forEach(function(c,idx,ar){
+      c.reset();
+    });
+  });
+  autosize2();
+  controllers.forEach(function(c,idx,ar){
+    c.start();
+  });
+});
+function autosize2() {
+  var autosizes=document.querySelectorAll("canvas.autosize2");//querySelectorAllはArrayではなくNodeListを返す
+  for (var i = 0; i < autosizes.length; ++i) {
+    var el=autosizes[i];
+    el.setAttribute('width',el.clientWidth);
+    el.setAttribute('height',el.clientHeight);
+  }
+}
+</script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+</body>
+</html>
