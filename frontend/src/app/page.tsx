@@ -1,11 +1,11 @@
 // app/page.tsx（Server Component）
-import ClockShell from "@/components/clock-shell";
+import RaceDashboard from "@/components/race-dashboard";
 import { ClockPoint } from "@/types/clock";
 import { RaceSchedule } from "@/types/race";
 
 export default function Page() {
-  const raceStart = new Date("2025-09-05T22:00:00+0900");
-  const raceEnd = new Date("2025-09-06T22:00:00+0900");
+  const raceStart = new Date("2025-09-06T22:00:00+0900");
+  const raceEnd = new Date("2025-09-07T22:00:00+0900");
   const clock_race: ClockPoint = {
     tz: "Europe/Paris",
     label: "le mans",
@@ -26,8 +26,7 @@ export default function Page() {
 
   return (
     <main>
-      <h1>24時間耐久レース時計</h1>
-      <ClockShell clocks={[clock_race, clock_view]} race={race} />
+      <RaceDashboard clocks={[clock_race, clock_view]} race={race} />
     </main>
   );
 }

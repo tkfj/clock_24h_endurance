@@ -89,20 +89,20 @@ export function localDayKey(nowUTC: Date, tz: string): string {
   return `${get("year")}-${get("month")}-${get("day")}@${tz}`;
 }
 
-// キーから UTC 00:00 の Date を生成（計算用）
-export function keyToDayStartUTC(key: string): Date {
-  const [ymd] = key.split("@");
-  const [y, m, d] = ymd.split("-").map(Number);
-  return new Date(Date.UTC(y, m - 1, d, 0, 0, 0));
-}
-// キーから ローカルタイム 00:00 の Date を生成（計算用）
+// // キーから UTC 00:00 の Date を生成（計算用）
+// export function keyToDayStartUTC(key: string): Date {
+//   const [ymd] = key.split("@");
+//   const [y, m, d] = ymd.split("-").map(Number);
+//   return new Date(Date.UTC(y, m - 1, d, 0, 0, 0));
+// }
+// ローカルタイム 00:00 の Date を生成（計算用）
 export function getDayStartLocal(nowUTC: Date, tz: string): Date {
   const offsetMins = getOffsetMinutes(nowUTC, tz);
   return new Date(
     Date.UTC(
       nowUTC.getUTCFullYear(),
       nowUTC.getUTCMonth(),
-      nowUTC.getUTCDay(),
+      nowUTC.getUTCDate(),
       0,
       0,
       0

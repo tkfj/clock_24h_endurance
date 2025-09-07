@@ -1,61 +1,54 @@
 "use client";
 
-import { useEffect, useLayoutEffect, useRef } from "react";
-import { getZonedParts, getZoneLabel } from "@/lib/tz";
+import { useCallback, useEffect, useRef } from "react";
+import { getZonedParts } from "@/lib/tz";
+import { resizeCanvasToDisplaySize } from "@/lib/canvas";
 
 type Props = {
   tz: string;
   label?: string;
   now: Date;
-  width?: number; // CSSピクセル
-  height?: number; // CSSピクセル
 };
 
-export default function ClockCanvas({
-  tz,
-  label,
-  now,
-  width = 240,
-  height = 240,
-}: Props) {
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+export default function ClockCanvas({ tz, label, now }: Props) {
+  const ref = useRef<HTMLCanvasElement | null>(null);
 
-  // DPRスケール
-  useLayoutEffect(() => {
-    const cvs = canvasRef.current;
-    if (!cvs) return;
-    const dpr = Math.max(1, window.devicePixelRatio || 1);
-    cvs.style.width = `${width}px`;
-    cvs.style.height = `${height}px`;
-    cvs.width = Math.floor(width * dpr);
-    cvs.height = Math.floor(height * dpr);
-    const ctx = cvs.getContext("2d");
-    if (ctx) ctx.setTransform(dpr, 0, 0, dpr, 0, 0); // 以降の描画はCSSピクセル基準
-  }, [width, height]);
-
-  // 描画
-  useEffect(() => {
-    const cvs = canvasRef.current;
+  const render = useCallback(() => {
+    const cvs = ref.current;
     if (!cvs) return;
     const ctx = cvs.getContext("2d");
     if (!ctx) return;
 
-    // クリア
-    ctx.clearRect(0, 0, width, height);
+    // 1) 見た目サイズに合わせて内部ビットマップを調整（拡大/縮小どちらも）
+    const { cssW, cssH } = resizeCanvasToDisplaySize(cvs);
 
-    // 文字時刻（まずは数字で見えることを確認）
+    // 2) クリア（CSSサイズでOK：座標はすでにDPR補正済み）
+    const width = cssW;
+    const height = cssH;
+    ctx.clearRect(0, 0, cssW, cssH);
+
     const { hour, minute, second } = getZonedParts(now, tz);
     const hh = hour % 12;
     const cx = width / 2,
       cy = height / 2;
     const r = Math.min(cx, cy) - 10;
 
+    const handhw = (r / 100) * 6 + 1;
+    const handmw = (r / 100) * 4 + 1;
+    const handsw = (r / 100) * 2 + 1;
+    const mem0l = (r / 100) * 12 + 1;
+    const mem5l = (r / 100) * 8 + 1;
+    const mem1l = (r / 100) * 5 + 1;
+    const mem0w = (r / 100) * 6 + 1;
+    const mem5w = (r / 100) * 5 + 1;
+    const mem1w = (r / 100) * 1.5 + 1;
+
     // 盤
-    ctx.beginPath();
-    ctx.arc(cx, cy, r, 0, Math.PI * 2);
-    ctx.strokeStyle = "#888";
-    ctx.lineWidth = 2;
-    ctx.stroke();
+    // ctx.beginPath();
+    // ctx.arc(cx, cy, r, 0, Math.PI * 2);
+    // ctx.strokeStyle = "#004465";
+    // ctx.lineWidth = 2;
+    // ctx.stroke();
 
     // 目盛り（簡易）
     ctx.save();
@@ -63,10 +56,10 @@ export default function ClockCanvas({
     for (let i = 1; i <= 60; i++) {
       ctx.rotate((Math.PI * 2) / 60);
       ctx.beginPath();
-      ctx.moveTo(r - (i % 5 === 0 ? 12 : 6), 0);
+      ctx.moveTo(r - (i === 45 ? mem0l : i % 5 === 0 ? mem5l : mem1l), 0);
       ctx.lineTo(r, 0);
-      ctx.strokeStyle = i % 5 === 0 ? "#666" : "#aaa";
-      ctx.lineWidth = i % 5 === 0 ? 2 : 1;
+      ctx.strokeStyle = "#004465";
+      ctx.lineWidth = i === 45 ? mem0w : i % 5 === 0 ? mem5w : mem1w;
       ctx.stroke();
     }
     ctx.restore();
@@ -97,29 +90,53 @@ export default function ClockCanvas({
     };
 
     // 針
-    drawHand(hourAngle, r * 0.55, 4, "#333");
-    drawHand(minAngle, r * 0.8, 3, "#333");
-    drawHand(secAngle, r * 0.9, 1, "#d33");
+    drawHand(hourAngle, r * 0.55, handhw, "#004465");
+    drawHand(minAngle, r * 0.8, handmw, "#004465");
+    drawHand(secAngle, r * 0.9, handsw, "#c5003f");
 
     // 中心点
     ctx.beginPath();
     ctx.arc(cx, cy, 3, 0, Math.PI * 2);
-    ctx.fillStyle = "#333";
+    ctx.fillStyle = "#c5003f";
     ctx.fill();
 
-    // === ラベル描画 ===
-    ctx.font = "bold 14px system-ui, sans-serif";
-    ctx.fillStyle = "#222";
-    ctx.textAlign = "center";
-    if (label) {
-      ctx.fillText(label, width / 2, height - 28); // 場所名 (大きめ)
-    }
+    // // === ラベル描画 ===
+    // ctx.font = "bold 14px system-ui, sans-serif";
+    // ctx.fillStyle = "#888";
+    // ctx.textAlign = "center";
+    // if (label) {
+    //   ctx.fillText(label, width / 2, height - 28); // 場所名 (大きめ)
+    // }
 
-    ctx.font = "12px system-ui, sans-serif";
-    ctx.fillStyle = "#555";
-    const zoneLabel = getZoneLabel(now, tz);
-    ctx.fillText(zoneLabel, width / 2, height - 12); // CEST+0200 (小さめ)
-  }, [now, tz, label, width, height]);
+    // ctx.font = "12px system-ui, sans-serif";
+    // ctx.fillStyle = "#888";
+    // const zoneLabel = getZoneLabel(now, tz);
+    // ctx.fillText(zoneLabel, width / 2, height - 12); // CEST+0200 (小さめ)
+  }, [now, tz, label]);
 
-  return <canvas ref={canvasRef} />;
+  useEffect(() => {
+    const cvs = ref.current;
+    if (!cvs) return;
+    const ro = new ResizeObserver(() => render());
+    ro.observe(cvs);
+    // 初回も描画
+    render();
+    return () => ro.disconnect();
+  }, [render]);
+
+  // 時間やデータが変わったら再描画
+  useEffect(() => {
+    render();
+  }, [render]);
+
+  return (
+    <canvas
+      ref={ref}
+      style={{
+        display: "block",
+        width: "100%", //  見た目は常に親幅にフィット
+        height: "100%", //  高さも親に従う（親が正方形を担保）
+      }}
+    />
+  );
 }
