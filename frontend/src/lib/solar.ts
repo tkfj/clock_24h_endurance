@@ -75,13 +75,12 @@ const addDaysUTC = (d: Date, n: number) =>
 export type SolarEventKind =
   | "sunrise"
   | "sunset"
-  // 将来拡張（薄明など）
-  | "civilBegin"
-  | "civilEnd"
-  | "nauticalBegin"
-  | "nauticalEnd"
-  | "astroBegin"
-  | "astroEnd";
+  | "sunrise_twilight_civil"
+  | "sunset_twilight_civil"
+  | "sunrise_twilight_naut"
+  | "sunset_twilight_naut"
+  | "sunrise_twilight_astro"
+  | "sunset_twilight_astro";
 
 export interface SolarEvent {
   kind: SolarEventKind;
@@ -125,55 +124,6 @@ export function riseSetAtAltitude(
   );
   const setUTC = new Date(dayUTC00.getTime() + Math.round(setMinUTC) * 60_000);
   return { status: "ok", riseUTC, setUTC };
-}
-
-/** 期間[fromUTC,toUTC]にある全イベントを発生順で返す（日の出/日の入り） */
-export function solarEventsInRange(
-  fromUTC: Date,
-  toUTC: Date,
-  lat: number,
-  lon: number,
-  opts?: { includeTwilight?: boolean } // 将来拡張フラグ
-): SolarEvent[] {
-  if (!(+toUTC >= +fromUTC)) return [];
-
-  // バッファ：FROM前日〜TO翌日までを走査（境界に掛かるイベントも拾う）
-  const startDay = dayStartUTC(addDaysUTC(fromUTC, -1));
-  const endDay = dayStartUTC(addDaysUTC(toUTC, +1));
-
-  const out: SolarEvent[] = [];
-  for (let day = startDay; +day <= +endDay; day = addDaysUTC(day, 1)) {
-    // 日の出/入り（太陽中心高度 -0.833°）
-    const rs = riseSetAtAltitude(day, lat, lon, -0.833);
-    if (rs.status === "ok") {
-      out.push({
-        kind: "sunrise",
-        state: "day",
-        whenUTC: rs.riseUTC,
-        altitudeDeg: -0.833,
-      });
-      out.push({
-        kind: "sunset",
-        state: "night",
-        whenUTC: rs.setUTC,
-        altitudeDeg: -0.833,
-      });
-    }
-    // 将来：薄明（civil −6°, nautical −12°, astro −18°）
-    // if (opts?.includeTwilight) { ...同様に push（kindを civilBegin/civilEnd 等で） }
-  }
-
-  // ソート→範囲に絞り込み（同時刻同値の重複はunique化）
-  out.sort((a, b) => +a.whenUTC - +b.whenUTC);
-  const filtered: SolarEvent[] = [];
-  let prevKey = "";
-  for (const e of out) {
-    const inRange = +e.whenUTC >= +fromUTC && +e.whenUTC <= +toUTC;
-    if (!inRange) continue;
-    const key = `${e.kind}@${e.whenUTC.toISOString()}`;
-    if (key !== prevKey) filtered.push(e), (prevKey = key);
-  }
-  return filtered;
 }
 
 export type PolarStatus = "sunNeverRises" | "sunNeverSets" | "ok";
@@ -231,9 +181,54 @@ export function solarEventsInRangeWithPrev(
       });
       all.push({
         kind: "sunset",
-        state: "night",
+        state: "twilight_civil",
         whenUTC: rs.setUTC,
         altitudeDeg: ALT,
+      });
+    }
+    const rs_tw_civ = riseSetAtAltitude(day, lat, lon, -6);
+    if (rs_tw_civ.status === "ok") {
+      all.push({
+        kind: "sunrise_twilight_civil",
+        state: "twilight_civil",
+        whenUTC: rs_tw_civ.riseUTC,
+        altitudeDeg: -6,
+      });
+      all.push({
+        kind: "sunset_twilight_civil",
+        state: "twilight_naut",
+        whenUTC: rs_tw_civ.setUTC,
+        altitudeDeg: -6,
+      });
+    }
+    const rs_tw_naut = riseSetAtAltitude(day, lat, lon, -12);
+    if (rs_tw_naut.status === "ok") {
+      all.push({
+        kind: "sunrise_twilight_naut",
+        state: "twilight_naut",
+        whenUTC: rs_tw_naut.riseUTC,
+        altitudeDeg: -12,
+      });
+      all.push({
+        kind: "sunset_twilight_naut",
+        state: "twilight_astro",
+        whenUTC: rs_tw_naut.setUTC,
+        altitudeDeg: -12,
+      });
+    }
+    const rs_tw_astr = riseSetAtAltitude(day, lat, lon, -18);
+    if (rs_tw_astr.status === "ok") {
+      all.push({
+        kind: "sunrise_twilight_astro",
+        state: "twilight_astro",
+        whenUTC: rs_tw_astr.riseUTC,
+        altitudeDeg: -18,
+      });
+      all.push({
+        kind: "sunset_twilight_astro",
+        state: "night",
+        whenUTC: rs_tw_astr.setUTC,
+        altitudeDeg: -18,
       });
     }
     // sunNeverRises/ sunNeverSets の日はイベントが発生しないため、
@@ -285,4 +280,9 @@ export function solarEventsInRangeWithPrev(
   return { events, prevEvent, initialState };
 }
 
-export type StateKind = "day" | "night" | "dawn" | "dusk";
+export type StateKind =
+  | "day"
+  | "night"
+  | "twilight_civil"
+  | "twilight_naut"
+  | "twilight_astro";

@@ -54,10 +54,12 @@ export default function ProgressBar({
     const colorFor = (k: StateKind | null) =>
       k === "day"
         ? "rgb(255, 223, 0)"
-        : k === "dawn"
-        ? "rgba(255, 160, 60, 0.35)"
-        : k === "dusk"
-        ? "rgba(255, 140, 80, 0.35)"
+        : k === "twilight_civil"
+        ? "rgb(255, 96, 30)"
+        : k === "twilight_naut"
+        ? "rgb(192, 0, 128)"
+        : k === "twilight_astro"
+        ? "rgb(83, 38, 116)"
         : "rgb(54, 38, 112)";
 
     const points = [start, ...solarEvents.map((x) => x.whenUTC), end];

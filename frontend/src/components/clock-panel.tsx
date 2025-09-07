@@ -59,14 +59,16 @@ export default function ClockPanel(props: { point: ClockPoint; now: Date }) {
           />
         </div>
       )}
-      <div className="square">
-        {width > 0 && (
-          <ClockCanvas
-            tz={props.point.tz}
-            label={props.point.label}
-            now={props.now}
-          />
-        )}
+      <div style={{ width: "100%", display: "grid", placeItems: "center" }}>
+        <div className="square">
+          {width > 0 && (
+            <ClockCanvas
+              tz={props.point.tz}
+              label={props.point.label}
+              now={props.now}
+            />
+          )}
+        </div>
       </div>
       <style jsx>{`
         .point-label {

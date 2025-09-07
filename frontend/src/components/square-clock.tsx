@@ -15,7 +15,7 @@ export default function SquareClock(props: {
     <div
       ref={ref}
       style={{
-        width: "100%",
+        width: "min(100%, var(--clock-edge))",
         aspectRatio: "1 / 1", // ←正方形をCSSで維持
         display: "grid",
         placeItems: "center",

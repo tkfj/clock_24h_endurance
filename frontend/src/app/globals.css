@@ -24,3 +24,17 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+:root {
+  --clock-edge: 50vw;
+} /* 既定：9:16〜1:1 */
+@media (max-aspect-ratio: 9/16) {
+  :root {
+    --clock-edge: 100vw;
+  } /* 縦長 */
+}
+@media (min-aspect-ratio: 1/1) {
+  :root {
+    --clock-edge: 50vh;
+  } /* 横長 → 高さ基準 */
+}

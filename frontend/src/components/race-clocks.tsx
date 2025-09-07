@@ -16,7 +16,7 @@ type Props = {
 };
 
 function msToHMS(ms: number, isRemain: number) {
-  if (!Number.isFinite(ms) || ms < 0) return "-";
+  if (!Number.isFinite(ms) || ms < 0) return "--------";
   const totalSec = Math.floor(ms / 1000);
   const h = Math.floor(totalSec / 3600);
   const m = Math.floor((totalSec % 3600) / 60);
@@ -33,11 +33,11 @@ function msToHMS(ms: number, isRemain: number) {
 export default function RaceClocks({ start, end, now }: Props) {
   const within = +now >= +start && +now <= +end;
 
-  const elapsed = within ? +now - +start : NaN;
+  const elapsed = +now - +start;
   const remain = within ? +end - +now : NaN;
 
-  const mainText = within ? `+${msToHMS(elapsed, 0)}` : "-";
-  const subText = within ? `-${msToHMS(remain, 1)}` : "-";
+  const mainText = `+${msToHMS(elapsed, 0)}`;
+  const subText = within ? `-${msToHMS(remain, 1)}` : "--------";
 
   const tail = within ? (elapsed > remain ? 0 : 1) : 0;
 
