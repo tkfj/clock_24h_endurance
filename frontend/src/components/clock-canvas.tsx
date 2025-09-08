@@ -13,7 +13,7 @@ type Props = {
 
 export default function ClockCanvas({ tz, label, now }: Props) {
   const ref = useRef<HTMLCanvasElement | null>(null);
-  const { fg, bg, ac } = useThemeColors();
+  const { fgColor, bgColor, acColor, edColor } = useThemeColors();
 
   const render = useCallback(() => {
     const cvs = ref.current;
@@ -60,7 +60,7 @@ export default function ClockCanvas({ tz, label, now }: Props) {
       ctx.beginPath();
       ctx.moveTo(r - (i === 45 ? mem0l : i % 5 === 0 ? mem5l : mem1l), 0);
       ctx.lineTo(r, 0);
-      ctx.strokeStyle = fg;
+      ctx.strokeStyle = fgColor;
       ctx.lineWidth = i === 45 ? mem0w : i % 5 === 0 ? mem5w : mem1w;
       ctx.stroke();
     }
@@ -85,12 +85,12 @@ export default function ClockCanvas({ tz, label, now }: Props) {
       ctx.beginPath();
       ctx.moveTo(-length / 10, 0);
       ctx.lineTo(length, 0);
-      ctx.strokeStyle = bg;
+      ctx.strokeStyle = bgColor;
       ctx.lineWidth = lw + 1;
       ctx.lineCap = "round";
       ctx.stroke();
       if (centersize > 0) {
-        ctx.fillStyle = bg;
+        ctx.fillStyle = bgColor;
         ctx.lineWidth = 0;
         ctx.beginPath();
         ctx.arc(0, 0, centersize + 1, 0, Math.PI * 2);
@@ -114,9 +114,9 @@ export default function ClockCanvas({ tz, label, now }: Props) {
     };
 
     // 針
-    drawHand(hourAngle, r * 0.55, handhw, fg);
-    drawHand(minAngle, r * 0.92, handmw, fg);
-    drawHand(secAngle, r * 0.9, handsw, ac, handsw * 2);
+    drawHand(hourAngle, r * 0.55, handhw, fgColor);
+    drawHand(minAngle, r * 0.92, handmw, fgColor);
+    drawHand(secAngle, r * 0.9, handsw, acColor, handsw * 2);
   }, [now, tz, label]);
 
   useEffect(() => {

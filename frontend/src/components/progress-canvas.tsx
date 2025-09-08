@@ -21,7 +21,7 @@ export default function ProgressBar({
   solarInitialState,
 }: Props) {
   const ref = useRef<HTMLCanvasElement | null>(null);
-  const { fg, bg, ac } = useThemeColors();
+  const { fgColor, bgColor, acColor, edColor } = useThemeColors();
 
   const render = useCallback(() => {
     const cvs = ref.current;
@@ -50,7 +50,7 @@ export default function ProgressBar({
 
     // ---- 背景
     ctx.clearRect(0, 0, W, H);
-    ctx.fillStyle = bg;
+    ctx.fillStyle = edColor;
     ctx.fillRect(barX, barY + h0, barW, barH);
 
     // ---- 帯（day/night/dawn/dusk）
@@ -82,7 +82,7 @@ export default function ProgressBar({
       const x = barX + barW * f;
       const w = barW * (t - f);
       ctx.fillStyle = colorFor(s.kind);
-      ctx.fillRect(x, barY + h0, w, barH);
+      ctx.fillRect(x, barY + h0 + 1, w, barH - 2);
     });
 
     // ---- 現在位置マーカー 一旦範囲外は描画しない(TODO 呼び元で制御)
@@ -90,9 +90,9 @@ export default function ProgressBar({
       const x = barX + barW * ratio;
       ctx.save();
       ctx.lineWidth = 2;
-      ctx.strokeStyle = ac;
-      ctx.fillStyle = ac;
-      ctx.shadowColor = bg;
+      ctx.strokeStyle = acColor;
+      ctx.fillStyle = acColor;
+      ctx.shadowColor = bgColor;
       ctx.shadowBlur = 5;
       ctx.shadowOffsetX = 0;
       ctx.shadowOffsetY = 5;

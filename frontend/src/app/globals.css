@@ -2,6 +2,7 @@
   --background: #f8f4ee;
   --foreground: #004465;
   --accent: #c5003f;
+  --edge: #d6d2cc;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -9,6 +10,7 @@
     --background: #001422;
     --foreground: #efe9dd;
     --accent: #c5003f;
+    --edge: #cdc7bb;
   }
 }
 

@@ -1,3 +1,4 @@
+import { useThemeColors } from "@/hooks/use-theme-colors";
 import { Courier_Prime } from "next/font/google";
 import Image from "next/image";
 
@@ -38,6 +39,7 @@ function msToHMS(ms: number, isRemain: number) {
 }
 
 export default function RaceClocks({ start, end, now }: Props) {
+  const { fgColor, bgColor, acColor, edColor } = useThemeColors();
   const within = +now >= +start && +now <= +end;
 
   const elapsed = +now - +start;
@@ -72,7 +74,11 @@ export default function RaceClocks({ start, end, now }: Props) {
           alt="logo"
           width={480}
           height={480}
-          style={{ width: "auto", height: "100%" }}
+          style={{
+            width: "auto",
+            height: "100%",
+            border: `1px solid ${edColor}`,
+          }}
         />
       </div>
 

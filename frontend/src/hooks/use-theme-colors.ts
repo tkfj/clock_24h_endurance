@@ -3,18 +3,20 @@ import { useEffect, useState } from "react";
 
 export function useThemeColors() {
   const [colors, setColors] = useState({
-    fg: "#171717",
-    bg: "#fafafa",
-    ac: "#fa1717",
+    fgColor: "#171717",
+    bgColor: "#fafafa",
+    acColor: "#fa1717",
+    edColor: "#e9e9e9",
   });
 
   useEffect(() => {
     const read = () => {
       const cs = getComputedStyle(document.documentElement);
       setColors({
-        fg: cs.getPropertyValue("--foreground").trim(),
-        bg: cs.getPropertyValue("--background").trim(),
-        ac: cs.getPropertyValue("--accent").trim(),
+        fgColor: cs.getPropertyValue("--foreground").trim(),
+        bgColor: cs.getPropertyValue("--background").trim(),
+        acColor: cs.getPropertyValue("--accent").trim(),
+        edColor: cs.getPropertyValue("--edge").trim(),
       });
     };
 
@@ -38,5 +40,5 @@ export function useThemeColors() {
     };
   }, []);
 
-  return colors; // { fg, bg, ac } いずれも CSSカラー文字列（# / rgb / hsl …）
+  return colors; // { fg, bg, ac, ed} いずれも CSSカラー文字列（# / rgb / hsl …）
 }
