@@ -36,7 +36,7 @@ export default function ClockCanvas({ tz, label, now }: Props) {
     const handhw = (r / 100) * 6 + 1;
     const handmw = (r / 100) * 4 + 1;
     const handsw = (r / 100) * 2 + 1;
-    const mem0l = (r / 100) * 12 + 1;
+    const mem0l = (r / 100) * 15 + 1;
     const mem5l = (r / 100) * 8 + 1;
     const mem1l = (r / 100) * 5 + 1;
     const mem0w = (r / 100) * 6 + 1;
@@ -74,25 +74,47 @@ export default function ClockCanvas({ tz, label, now }: Props) {
       angle: number,
       length: number,
       lw: number,
-      color: string
+      color: string,
+      centersize = 0
     ) => {
       ctx.save();
       ctx.translate(cx, cy);
       ctx.rotate(angle - Math.PI / 2);
       ctx.beginPath();
-      ctx.moveTo(-8, 0);
+      ctx.moveTo(-length / 10, 0);
+      ctx.lineTo(length, 0);
+      ctx.strokeStyle = "#ffffff";
+      ctx.lineWidth = lw + 1;
+      ctx.lineCap = "round";
+      ctx.stroke();
+      if (centersize > 0) {
+        ctx.fillStyle = "#ffffff";
+        ctx.lineWidth = 0;
+        ctx.beginPath();
+        ctx.arc(0, 0, centersize, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.beginPath();
+      ctx.moveTo(-length / 10, 0);
       ctx.lineTo(length, 0);
       ctx.strokeStyle = color;
       ctx.lineWidth = lw;
       ctx.lineCap = "round";
       ctx.stroke();
+      if (centersize > 0) {
+        ctx.fillStyle = color;
+        ctx.lineWidth = 0;
+        ctx.beginPath();
+        ctx.arc(0, 0, centersize, 0, Math.PI * 2);
+        ctx.fill();
+      }
       ctx.restore();
     };
 
     // 針
     drawHand(hourAngle, r * 0.55, handhw, "#004465");
-    drawHand(minAngle, r * 0.8, handmw, "#004465");
-    drawHand(secAngle, r * 0.9, handsw, "#c5003f");
+    drawHand(minAngle, r * 0.92, handmw, "#004465");
+    drawHand(secAngle, r * 0.9, handsw, "#c5003f", handsw * 2);
 
     // 中心点
     ctx.beginPath();

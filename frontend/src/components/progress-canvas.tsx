@@ -55,7 +55,7 @@ export default function ProgressBar({
       k === "day"
         ? "rgb(255, 223, 0)"
         : k === "twilight_civil"
-        ? "rgb(255, 96, 30)"
+        ? "rgb(240, 80, 28)"
         : k === "twilight_naut"
         ? "rgb(192, 0, 128)"
         : k === "twilight_astro"

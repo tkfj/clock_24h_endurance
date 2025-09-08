@@ -68,7 +68,7 @@ export default function RaceDashboard({
         .wrap {
           padding: clamp(8px, 2vw, 20px);
           display: grid;
-          gap: clamp(8px, 2.5vw, 20px);
+          gap: clamp(4px, 1vw, 10px);
         }
 
         .clocks {

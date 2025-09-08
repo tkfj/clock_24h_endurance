@@ -8,7 +8,7 @@ import { getDayStartLocal, getZoneLabel, localDayKey } from "@/lib/tz";
 import { useMemo } from "react";
 import { ClockPoint } from "@/types/clock";
 
-import { Black_And_White_Picture, Prompt } from "next/font/google";
+import { Prompt } from "next/font/google";
 
 const font_prompt = Prompt({
   subsets: ["latin"],

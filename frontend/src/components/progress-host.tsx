@@ -13,7 +13,7 @@ export default function ProgressBarHost(props: {
 }) {
   const { ref, width } = useElementSize<HTMLDivElement>();
   return (
-    <div ref={ref} style={{ width: "100%", height: "7vw" }}>
+    <div ref={ref} style={{ width: "100%", height: "6vw" }}>
       {width > 0 && (
         <ProgressBarCanvas
           start={props.start}

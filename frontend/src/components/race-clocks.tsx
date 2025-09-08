@@ -12,19 +12,28 @@ type Props = {
   start: Date; // UTCの瞬間
   end: Date; // UTCの瞬間
   now: Date; // 親で集約した "now"
-  // 表示の細かいオプションが欲しくなったらここに足す
 };
 
 function msToHMS(ms: number, isRemain: number) {
-  if (!Number.isFinite(ms) || ms < 0) return "--------";
-  const totalSec = Math.floor(ms / 1000);
+  if (!Number.isFinite(ms)) return "--------";
+  const sign = isRemain ? (ms < 0 ? "+" : "-") : ms < 0 ? "-" : "+";
+  if (ms < 0) ms = -ms;
+  const totalSec = isRemain ? Math.ceil(ms / 1000) : Math.floor(ms / 1000);
+  const micro = ms % 1000;
   const h = Math.floor(totalSec / 3600);
   const m = Math.floor((totalSec % 3600) / 60);
   const s = totalSec % 60;
-  const micro = ms - totalSec * 1000;
   const sep = isRemain ? (micro < 500 ? " " : ":") : micro < 500 ? ":" : " ";
   // 時は 24h超もそのまま伸びる（例: 25:03:07）
-  return `${String(h).padStart(2, "0")}${sep}${String(m).padStart(
+  if (isRemain && sign == "+") {
+    if (sep == ":") {
+      return "/# # # #.";
+    } else {
+      return "| # # # .";
+    }
+  }
+
+  return `${sign}${String(h).padStart(2, "0")}${sep}${String(m).padStart(
     2,
     "0"
   )}${sep}${String(s).padStart(2, "0")}`;
@@ -34,12 +43,13 @@ export default function RaceClocks({ start, end, now }: Props) {
   const within = +now >= +start && +now <= +end;
 
   const elapsed = +now - +start;
-  const remain = within ? +end - +now : NaN;
+  const remain = +end - +now;
 
-  const mainText = `+${msToHMS(elapsed, 0)}`;
-  const subText = within ? `-${msToHMS(remain, 1)}` : "--------";
+  const mainText = `${msToHMS(elapsed, 0)}`;
+  const subText = `${msToHMS(remain, 1)}`;
 
-  const tail = within ? (elapsed > remain ? 0 : 1) : 0;
+  const tail = elapsed > remain;
+  const checker = tail && remain <= 0;
 
   return (
     <div
@@ -69,7 +79,7 @@ export default function RaceClocks({ start, end, now }: Props) {
       </div>
 
       <div
-        className={font_mono.className}
+        className={checker ? "checker" : font_mono.className}
         style={{
           fontSize: "6.4vw",
           padding: "0 1vw",
@@ -78,7 +88,7 @@ export default function RaceClocks({ start, end, now }: Props) {
           alignSelf: "end",
         }}
       >
-        {tail === 0 ? subText : mainText}
+        {checker ? "" : tail ? subText : mainText}
       </div>
       <div
         className={font_mono.className}
@@ -91,8 +101,23 @@ export default function RaceClocks({ start, end, now }: Props) {
           alignSelf: "end",
         }}
       >
-        {tail === 0 ? mainText : subText}
+        {tail ? mainText : subText}
       </div>
+      <style jsx>{`
+        .checker {
+          height: 9.4vw;
+          --cell: 16px;
+          --dark: #111;
+          --light: #eee;
+          /* 市松模様 左上を黒にするために90度回転*/
+          background: repeating-conic-gradient(
+              from 90deg,
+              var(--dark) 0 25%,
+              var(--light) 0 50%
+            )
+            0 0 / calc(var(--cell) * 2) calc(var(--cell) * 2);
+        }
+      `}</style>
     </div>
   );
 }
