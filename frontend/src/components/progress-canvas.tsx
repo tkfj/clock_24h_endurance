@@ -3,6 +3,7 @@
 import { resizeCanvasToDisplaySize } from "@/lib/canvas";
 import { SolarEvent, StateKind } from "@/lib/solar";
 import { useCallback, useEffect, useRef } from "react";
+import { useThemeColors } from "@/hooks/use-theme-colors";
 
 type Props = {
   start: Date; // 期間開始(UTC)
@@ -20,6 +21,7 @@ export default function ProgressBar({
   solarInitialState,
 }: Props) {
   const ref = useRef<HTMLCanvasElement | null>(null);
+  const { fg, bg, ac } = useThemeColors();
 
   const render = useCallback(() => {
     const cvs = ref.current;
@@ -43,11 +45,12 @@ export default function ProgressBar({
 
     const total = +end - +start;
     const clamp01 = (x: number) => Math.max(0, Math.min(1, x));
-    const ratio = clamp01((+now - +start) / total);
+    const ratio_raw = (+now - +start) / total;
+    const ratio = clamp01(ratio_raw);
 
-    // ---- 背景（薄いグレーの丸角バー）
+    // ---- 背景
     ctx.clearRect(0, 0, W, H);
-    ctx.fillStyle = "#e5e5e5";
+    ctx.fillStyle = bg;
     ctx.fillRect(barX, barY + h0, barW, barH);
 
     // ---- 帯（day/night/dawn/dusk）
@@ -82,44 +85,25 @@ export default function ProgressBar({
       ctx.fillRect(x, barY + h0, w, barH);
     });
 
-    // // ---- 進捗フィル（黒の薄め）
-    // {
-    //   const x = barX;
-    //   const w = barW * ratio;
-    //   roundedRectPart(ctx, x, barY, w, barH, R, true, ratio >= 1 - 1e-9);
-    //   ctx.fillStyle = "rgba(0,0,0,0.25)";
-    //   ctx.fill();
-    // }
-
-    // ---- 現在位置マーカー
-    const x = barX + barW * ratio;
-    ctx.save();
-    ctx.lineWidth = 2;
-    ctx.strokeStyle = "rgb(236,0,152)";
-    ctx.fillStyle = "rgb(236,0,152)";
-    ctx.shadowColor = "rgba(0,0,0,0.5)";
-    ctx.shadowBlur = 5;
-    ctx.shadowOffsetX = 0;
-    ctx.shadowOffsetY = 5;
-    ctx.beginPath();
-    ctx.moveTo(x, barY + barH);
-    ctx.lineTo(x - barH / 2.2, barY);
-    ctx.lineTo(x + barH / 2.2, barY);
-    ctx.lineTo(x, barY + barH);
-    ctx.fill();
-    ctx.restore();
-
-    // // ---- % 表示（右上あたり）
-    // ctx.font = "12px system-ui, sans-serif";
-    // ctx.fillStyle = "#333";
-    // ctx.textAlign = "right";
-    // ctx.textBaseline = "alphabetic";
-    // ctx.fillText(`${(ratio * 100).toFixed(1)}%`, W - 2, H - 4);
-
-    // console.log("start", start);
-    // console.log("end", end);
-    // console.log("now", now);
-    // console.log("ratio", ratio);
+    // ---- 現在位置マーカー 一旦範囲外は描画しない(TODO 呼び元で制御)
+    if (ratio === ratio_raw) {
+      const x = barX + barW * ratio;
+      ctx.save();
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = ac;
+      ctx.fillStyle = ac;
+      ctx.shadowColor = bg;
+      ctx.shadowBlur = 5;
+      ctx.shadowOffsetX = 0;
+      ctx.shadowOffsetY = 5;
+      ctx.beginPath();
+      ctx.moveTo(x, barY + barH);
+      ctx.lineTo(x - barH / 2.2, barY);
+      ctx.lineTo(x + barH / 2.2, barY);
+      ctx.lineTo(x, barY + barH);
+      ctx.fill();
+      ctx.restore();
+    }
   }, [start, end, now, solarEvents, solarInitialState]);
 
   useEffect(() => {

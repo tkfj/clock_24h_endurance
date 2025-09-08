@@ -86,7 +86,6 @@ export default function ClockPanel(props: { point: ClockPoint; now: Date }) {
           width: 100%;
           display: grid;
           gap: 0px;
-          color: #004465;
         }
         .square {
           width: min(

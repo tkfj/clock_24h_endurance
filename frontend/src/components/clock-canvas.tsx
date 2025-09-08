@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef } from "react";
 import { getZonedParts } from "@/lib/tz";
 import { resizeCanvasToDisplaySize } from "@/lib/canvas";
+import { useThemeColors } from "@/hooks/use-theme-colors";
 
 type Props = {
   tz: string;
@@ -12,6 +13,7 @@ type Props = {
 
 export default function ClockCanvas({ tz, label, now }: Props) {
   const ref = useRef<HTMLCanvasElement | null>(null);
+  const { fg, bg, ac } = useThemeColors();
 
   const render = useCallback(() => {
     const cvs = ref.current;
@@ -58,7 +60,7 @@ export default function ClockCanvas({ tz, label, now }: Props) {
       ctx.beginPath();
       ctx.moveTo(r - (i === 45 ? mem0l : i % 5 === 0 ? mem5l : mem1l), 0);
       ctx.lineTo(r, 0);
-      ctx.strokeStyle = "#004465";
+      ctx.strokeStyle = fg;
       ctx.lineWidth = i === 45 ? mem0w : i % 5 === 0 ? mem5w : mem1w;
       ctx.stroke();
     }
@@ -83,15 +85,15 @@ export default function ClockCanvas({ tz, label, now }: Props) {
       ctx.beginPath();
       ctx.moveTo(-length / 10, 0);
       ctx.lineTo(length, 0);
-      ctx.strokeStyle = "#ffffff";
+      ctx.strokeStyle = bg;
       ctx.lineWidth = lw + 1;
       ctx.lineCap = "round";
       ctx.stroke();
       if (centersize > 0) {
-        ctx.fillStyle = "#ffffff";
+        ctx.fillStyle = bg;
         ctx.lineWidth = 0;
         ctx.beginPath();
-        ctx.arc(0, 0, centersize, 0, Math.PI * 2);
+        ctx.arc(0, 0, centersize + 1, 0, Math.PI * 2);
         ctx.fill();
       }
       ctx.beginPath();
@@ -112,28 +114,9 @@ export default function ClockCanvas({ tz, label, now }: Props) {
     };
 
     // 針
-    drawHand(hourAngle, r * 0.55, handhw, "#004465");
-    drawHand(minAngle, r * 0.92, handmw, "#004465");
-    drawHand(secAngle, r * 0.9, handsw, "#c5003f", handsw * 2);
-
-    // 中心点
-    ctx.beginPath();
-    ctx.arc(cx, cy, 3, 0, Math.PI * 2);
-    ctx.fillStyle = "#c5003f";
-    ctx.fill();
-
-    // // === ラベル描画 ===
-    // ctx.font = "bold 14px system-ui, sans-serif";
-    // ctx.fillStyle = "#888";
-    // ctx.textAlign = "center";
-    // if (label) {
-    //   ctx.fillText(label, width / 2, height - 28); // 場所名 (大きめ)
-    // }
-
-    // ctx.font = "12px system-ui, sans-serif";
-    // ctx.fillStyle = "#888";
-    // const zoneLabel = getZoneLabel(now, tz);
-    // ctx.fillText(zoneLabel, width / 2, height - 12); // CEST+0200 (小さめ)
+    drawHand(hourAngle, r * 0.55, handhw, fg);
+    drawHand(minAngle, r * 0.92, handmw, fg);
+    drawHand(secAngle, r * 0.9, handsw, ac, handsw * 2);
   }, [now, tz, label]);
 
   useEffect(() => {

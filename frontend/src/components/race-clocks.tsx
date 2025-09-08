@@ -18,14 +18,18 @@ function msToHMS(ms: number, isRemain: number) {
   if (!Number.isFinite(ms)) return "--------";
   const sign = isRemain ? (ms < 0 ? "+" : "-") : ms < 0 ? "-" : "+";
   if (ms < 0) ms = -ms;
-  const totalSec = isRemain ? Math.ceil(ms / 1000) : Math.floor(ms / 1000);
+  const totalSec = isRemain
+    ? Math.ceil(ms / 1000)
+    : sign === "+"
+    ? Math.floor(ms / 1000)
+    : Math.ceil(ms / 1000);
   const micro = ms % 1000;
   const hh = Math.floor(totalSec / 3600);
   const h = hh >= 24 ? hh % 24 : hh;
-  const d = hh >= 24 ? Math.floor(hh / 24) : hh;
+  const d = hh >= 24 ? Math.floor(hh / 24) : 0;
   const m = Math.floor((totalSec % 3600) / 60);
   const s = totalSec % 60;
-  const sep = isRemain ? (micro < 500 ? " " : ":") : micro < 500 ? ":" : " ";
+  const sep = sign == "-" ? (micro < 500 ? " " : ":") : micro < 500 ? ":" : " ";
 
   return `${sign}${d > 0 ? String(d) + "d" : ""}${String(h).padStart(
     2,
@@ -39,7 +43,7 @@ export default function RaceClocks({ start, end, now }: Props) {
   const elapsed = +now - +start;
   const remain = +end - +now;
 
-  const mainText = `${msToHMS(elapsed, 0)}`;
+  const mainText = remain >= 0 ? `${msToHMS(elapsed, 0)}` : "";
   const subText = elapsed >= 0 ? `${msToHMS(remain, 1)}` : "";
 
   const tail = elapsed > remain;
@@ -49,7 +53,7 @@ export default function RaceClocks({ start, end, now }: Props) {
     <div
       style={{
         display: "grid",
-        height: "9.4vw",
+        height: "9.2vw",
         gridTemplateColumns: "2fr 3fr 2fr",
         gap: 0,
         alignItems: "center",
@@ -57,7 +61,7 @@ export default function RaceClocks({ start, end, now }: Props) {
     >
       <div
         style={{
-          height: "9.4vw",
+          height: "9.2vw",
           margin: 0,
           padding: 0,
           alignSelf: "end",
@@ -75,9 +79,8 @@ export default function RaceClocks({ start, end, now }: Props) {
       <div
         className={checker ? "checker" : font_mono.className}
         style={{
-          fontSize: elapsed >= 0 ? "6.4vw" : "4.4vw",
+          fontSize: elapsed > -24 * 60 * 60 * 1000 + 1000 ? "6.4vw" : "4.4vw",
           padding: "0 1vw",
-          color: "#004465",
           textAlign: "center",
           alignSelf: "end",
         }}
@@ -87,10 +90,8 @@ export default function RaceClocks({ start, end, now }: Props) {
       <div
         className={font_mono.className}
         style={{
-          // height: "9.4vw",
           fontSize: "3.6vw",
           padding: "0 1vw",
-          color: "#004465",
           textAlign: "right",
           alignSelf: "end",
         }}
@@ -99,10 +100,10 @@ export default function RaceClocks({ start, end, now }: Props) {
       </div>
       <style jsx>{`
         .checker {
-          height: 9.4vw;
-          --cell: 16px;
-          --dark: #111;
-          --light: #eee;
+          height: 9.2vw;
+          --cell: 2.3vw;
+          --dark: bg;
+          --light: fg;
           /* 市松模様 左上を黒にするために90度回転*/
           background: repeating-conic-gradient(
               from 90deg,
