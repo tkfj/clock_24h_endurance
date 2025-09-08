@@ -20,23 +20,17 @@ function msToHMS(ms: number, isRemain: number) {
   if (ms < 0) ms = -ms;
   const totalSec = isRemain ? Math.ceil(ms / 1000) : Math.floor(ms / 1000);
   const micro = ms % 1000;
-  const h = Math.floor(totalSec / 3600);
+  const hh = Math.floor(totalSec / 3600);
+  const h = hh >= 24 ? hh % 24 : hh;
+  const d = hh >= 24 ? Math.floor(hh / 24) : hh;
   const m = Math.floor((totalSec % 3600) / 60);
   const s = totalSec % 60;
   const sep = isRemain ? (micro < 500 ? " " : ":") : micro < 500 ? ":" : " ";
-  // 時は 24h超もそのまま伸びる（例: 25:03:07）
-  if (isRemain && sign == "+") {
-    if (sep == ":") {
-      return "/# # # #.";
-    } else {
-      return "| # # # .";
-    }
-  }
 
-  return `${sign}${String(h).padStart(2, "0")}${sep}${String(m).padStart(
+  return `${sign}${d > 0 ? String(d) + "d" : ""}${String(h).padStart(
     2,
     "0"
-  )}${sep}${String(s).padStart(2, "0")}`;
+  )}${sep}${String(m).padStart(2, "0")}${sep}${String(s).padStart(2, "0")}`;
 }
 
 export default function RaceClocks({ start, end, now }: Props) {
@@ -46,7 +40,7 @@ export default function RaceClocks({ start, end, now }: Props) {
   const remain = +end - +now;
 
   const mainText = `${msToHMS(elapsed, 0)}`;
-  const subText = `${msToHMS(remain, 1)}`;
+  const subText = elapsed >= 0 ? `${msToHMS(remain, 1)}` : "";
 
   const tail = elapsed > remain;
   const checker = tail && remain <= 0;
@@ -81,7 +75,7 @@ export default function RaceClocks({ start, end, now }: Props) {
       <div
         className={checker ? "checker" : font_mono.className}
         style={{
-          fontSize: "6.4vw",
+          fontSize: elapsed >= 0 ? "6.4vw" : "4.4vw",
           padding: "0 1vw",
           color: "#004465",
           textAlign: "center",

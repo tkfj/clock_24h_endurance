@@ -1,0 +1,13 @@
+# 依存＆ビルドキャッシュは送らない
+node_modules
+.next/cache
+
+# 開発用
+.devcontainer
+.vscode
+.DS_Store
+
+# Git と各種一時ファイル
+.git
+.gitignore
+*.log

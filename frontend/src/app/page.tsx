@@ -4,8 +4,8 @@ import { ClockPoint } from "@/types/clock";
 import { RaceSchedule } from "@/types/race";
 
 export default function Page() {
-  const raceStart = new Date("2025-09-08T22:00:00+0900");
-  const raceEnd = new Date("2025-09-09T22:00:00+0900");
+  const raceStart = new Date("2026-06-13T23:00:00+0900");
+  const raceEnd = new Date("2026-06-14T23:00:00+0900");
   const clock_race: ClockPoint = {
     tz: "Europe/Paris",
     label: "le mans",
