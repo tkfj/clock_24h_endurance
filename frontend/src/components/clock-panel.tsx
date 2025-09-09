@@ -4,10 +4,9 @@ import { useElementSize } from "@/hooks/use-element-size";
 import ProgressBarCanvas from "@/components/progress-canvas";
 import ClockCanvas from "@/components/clock-canvas";
 import { solarEventsInRangeWithPrev } from "@/lib/solar";
-import { getDayStartLocal, getZoneLabel, localDayKey } from "@/lib/tz";
+import { getDayStartLocal, getZoneLabel } from "@/lib/tz";
 import { useMemo } from "react";
 import { ClockPoint } from "@/types/clock";
-
 import { Prompt } from "next/font/google";
 
 const font_prompt = Prompt({
@@ -19,13 +18,9 @@ export default function ClockPanel(props: { point: ClockPoint; now: Date }) {
   const { ref, width } = useElementSize<HTMLDivElement>();
   const tzLabel = getZoneLabel(props.now, props.point.tz);
 
-  const dayKey = useMemo(
-    () => localDayKey(props.now, props.point.tz),
-    [props.now, props.point.tz]
-  );
   const dayStart = useMemo(
     () => getDayStartLocal(props.now, props.point.tz),
-    [dayKey, props.point.tz]
+    [props.now, props.point.tz]
   );
   const dayEnd = useMemo(
     () => new Date(dayStart.getTime() + 1000 * 60 * 60 * 24),
@@ -39,7 +34,7 @@ export default function ClockPanel(props: { point: ClockPoint; now: Date }) {
         props.point.lat,
         props.point.lon
       ),
-    [dayKey]
+    [dayStart, dayEnd, props.point.lat, props.point.lon]
   );
 
   return (

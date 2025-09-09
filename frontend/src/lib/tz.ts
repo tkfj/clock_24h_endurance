@@ -76,37 +76,24 @@ export function getZoneLabel(date: Date, tz: string): string {
   return abbr ? `${abbr}${offset}` : `UTC${offset}`; // フォールバック
 }
 
-// 現地“今日”のキーを作る（依存に使う）
-export function localDayKey(nowUTC: Date, tz: string): string {
-  const p = new Intl.DateTimeFormat("en-CA", {
-    timeZone: tz,
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  }).formatToParts(nowUTC);
-  const get = (t: Intl.DateTimeFormatPartTypes) =>
-    p.find((x) => x.type === t)!.value;
-  return `${get("year")}-${get("month")}-${get("day")}@${tz}`;
-}
-
-// // キーから UTC 00:00 の Date を生成（計算用）
-// export function keyToDayStartUTC(key: string): Date {
-//   const [ymd] = key.split("@");
-//   const [y, m, d] = ymd.split("-").map(Number);
-//   return new Date(Date.UTC(y, m - 1, d, 0, 0, 0));
-// }
-// ローカルタイム 00:00 の Date を生成（計算用）
+// ローカルタイム 00:00 の UTC Date を生成（計算用）
 export function getDayStartLocal(nowUTC: Date, tz: string): Date {
   const offsetMins = getOffsetMinutes(nowUTC, tz);
-  return new Date(
-    Date.UTC(
-      nowUTC.getUTCFullYear(),
-      nowUTC.getUTCMonth(),
-      nowUTC.getUTCDate(),
-      0,
-      0,
-      0
-    ) -
+  const y = Intl.DateTimeFormat("en-CA", {
+    timeZone: tz,
+    year: "numeric",
+  }).format();
+  const m = Intl.DateTimeFormat("en-CA", {
+    timeZone: tz,
+    month: "numeric",
+  }).format();
+  const d = Intl.DateTimeFormat("en-CA", {
+    timeZone: tz,
+    day: "numeric",
+  }).format();
+  const zeroUTC = new Date(
+    Date.UTC(Number(y), Number(m) - 1, Number(d), 0, 0, 0) -
       offsetMins * 60 * 1000
   );
+  return zeroUTC;
 }

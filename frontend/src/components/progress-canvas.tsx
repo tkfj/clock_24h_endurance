@@ -21,7 +21,7 @@ export default function ProgressBar({
   solarInitialState,
 }: Props) {
   const ref = useRef<HTMLCanvasElement | null>(null);
-  const { fgColor, bgColor, acColor, edColor } = useThemeColors();
+  const { bgColor, acColor, edColor } = useThemeColors();
 
   const render = useCallback(() => {
     const cvs = ref.current;
@@ -104,7 +104,16 @@ export default function ProgressBar({
       ctx.fill();
       ctx.restore();
     }
-  }, [start, end, now, solarEvents, solarInitialState]);
+  }, [
+    start,
+    end,
+    now,
+    solarEvents,
+    solarInitialState,
+    bgColor,
+    acColor,
+    edColor,
+  ]);
 
   useEffect(() => {
     const cvs = ref.current;
