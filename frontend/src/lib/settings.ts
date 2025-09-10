@@ -49,13 +49,25 @@ export const RACES: Race[] = [
   {
     id: "2026-lemans24",
     name: "2026 - 24 Heures du Mans",
-    start: new Date("2026-06-13T14:00:00+02:00"),
+    start: new Date("2026-06-13T14:00:00+02:00"),//FIX済
     end: new Date("2026-06-14T14:00:00+02:00"),
     place: place_lemans,
     logo: {
       imageFile:"/24h_lemans.png",
       foregroundColor:"#0d64ff",
       backgroundColor:"#ffffff",
+    }
+  },
+  {
+    id: "2026-daytona24",
+    name: "2026 - ROREX 24 AT DAYTONA",
+    start: new Date("2026-01-24T13:40:00-05:00"), //時間は前年踏襲で仮置き
+    end: new Date("2026-01-25T13:40:00-05:00"),
+    place: place_daytona,
+    logo: {
+      imageFile:"/R24Logo_218x180.png",
+      foregroundColor:"rgba(0,0,0,0)",
+      backgroundColor:"rgb(255,255,255)",
     }
   },
   {
@@ -70,6 +82,18 @@ export const RACES: Race[] = [
       imageFile:"/crowdstrike-24-hours-spa-logo.svg",
       foregroundColor:"rgba(0,0,0,0)",
       backgroundColor:"rgb(255,255,255)",
+    }
+  },
+  {
+    id: "2026-nur24",
+    name: "2026 - ADAC RAVENOL 24h Nürburgring",
+    start: new Date("2026-05-16T16:00:00+02:00"),//時間は昨年踏襲で仮置き(開催が1か月早まるので変わるかもな)
+    end: new Date("2026-05-17T16:00:00+02:00"),
+    place: place_nur,
+    logo: {
+      imageFile:"/ADAC_Ravenol_24h_2024_CMYK_1c_trans.png",
+      foregroundColor:"rgb(255,255,255)",
+      backgroundColor:"#43632d",
     }
   },
   {
