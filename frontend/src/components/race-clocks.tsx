@@ -13,6 +13,9 @@ type Props = {
   start: Date; // UTCの瞬間
   end: Date; // UTCの瞬間
   now: Date; // 親で集約した "now"
+  logoImageFile: string;
+  logoForegroundColor: string;
+  logoBackgroundColor: string;
 };
 
 function msToHMS(ms: number, isRemain: number) {
@@ -38,7 +41,7 @@ function msToHMS(ms: number, isRemain: number) {
   )}${sep}${String(m).padStart(2, "0")}${sep}${String(s).padStart(2, "0")}`;
 }
 
-export default function RaceClocks({ start, end, now }: Props) {
+export default function RaceClocks({ start, end, now, logoImageFile, logoForegroundColor, logoBackgroundColor }: Props) {
   const { edColor, darkColor, lightColor } = useThemeColors();
   const within = +now >= +start && +now <= +end;
 
@@ -70,7 +73,7 @@ export default function RaceClocks({ start, end, now }: Props) {
         }}
       >
         <Image
-          src="/24h_lemans.png"
+          src={logoImageFile}
           alt="logo"
           width={480}
           height={480}
@@ -78,6 +81,9 @@ export default function RaceClocks({ start, end, now }: Props) {
             width: "auto",
             height: "100%",
             border: `1px solid ${edColor}`,
+            backgroundColor:logoBackgroundColor,
+            color:logoForegroundColor,
+            fill:logoForegroundColor,
           }}
         />
       </div>

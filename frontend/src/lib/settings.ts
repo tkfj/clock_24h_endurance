@@ -7,7 +7,13 @@ export type Race = {
   start: Date;
   end: Date;
   place: ClockPoint;
+  logo: Logo;
 };
+export type Logo = {
+  imageFile: string;
+  foregroundColor: string;
+  backgroundColor: string;
+}
 
 const PLACE_DEFAULT: ClockPoint = {
   label: "tokyo",
@@ -22,25 +28,79 @@ const place_lemans: ClockPoint = {
   lon: 0.207354,
 };
 const place_spa: ClockPoint = {
-  label: "spa francorchamps",
+  label: "spa-francorchamps",
   tz: "Europe/Brussels",
-  lat: 0,
-  lon: 0,
+  lat: 50.4428908,
+  lon: 5.9652831,
+};
+const place_nur: ClockPoint = {
+  label: "nürburgring",
+  tz: "Europe/Berlin",
+  lat: 50.3355987,
+  lon: 6.947032,
 };
 export const RACES: Race[] = [
   {
-    id: "lemans-2026",
-    name: "24 Heures du Mans 2026",
+    id: "2026-lemans24",
+    name: "2026 - 24 Heures du Mans",
     start: new Date("2026-06-13T14:00:00+02:00"),
     end: new Date("2026-06-14T14:00:00+02:00"),
     place: place_lemans,
+    logo: {
+      imageFile:"/24h_lemans.png",
+      foregroundColor:"#0d64ff",
+      backgroundColor:"#ffffff",
+    }
   },
   {
-    id: "lemans-2025",
-    name: "24 Heures du Mans 2025",
+    id: "2026-spa24",
+    name: "2026 - CrowdStrike 24 Hours of Spa",
+    //start: new Date("2026-06-24T00:00:00Z"),//公式サイトのカウントダウンがここを目指しているがおそらくプログラム開始当日のUTCゼロ時という意味と思われる。レースは例年通りの時間なら↓
+    //end: new Date("2026-06-25T00:00:00Z"),
+    start: new Date("2026-06-27T16:30:00+02:00"),
+    end: new Date("2026-06-28T16:30:00+02:00"),
+    place: place_spa,
+    logo: {
+      imageFile:"/crowdstrike-24-hours-spa-logo.svg",
+      foregroundColor:"rgba(0,0,0,0)",
+      backgroundColor:"rgb(255,255,255)",
+    }
+  },
+  {
+    id: "2025-lemans24",
+    name: "2025 - 24 Heures du Mans",
     start: new Date("2025-06-14T14:00:00+02:00"),
     end: new Date("2025-06-15T14:00:00+02:00"),
     place: place_lemans,
+    logo: {
+      imageFile:"/24h_lemans.png",
+      foregroundColor:"rgba(0,0,0,0)",
+      backgroundColor:"rgb(255,255,255)",
+    }
+  },
+  {
+    id: "2025-nur24",
+    name: "2025 - ADAC RAVENOL 24h Nürburgring",
+    start: new Date("2025-06-21T16:00:00+02:00"),
+    end: new Date("2025-06-22T16:00:00+02:00"),
+    place: place_nur,
+    logo: {
+      imageFile:"/ADAC_Ravenol_24h_2024_CMYK_1c_trans.png",
+      foregroundColor:"rgb(255,255,255)",
+      backgroundColor:"#43632d",
+    }
+  },
+  {
+    id: "2025-spa24",
+    name: "2025 - CrowdStrike 24 Hours of Spa",
+    start: new Date("2025-06-28T16:30:00+02:00"),
+    end: new Date("2025-06-29T16:30:00+02:00"),
+    place: place_spa,
+    logo: {
+      imageFile:"/crowdstrike-24-hours-spa-logo.svg",
+      foregroundColor:"rgba(0,0,0,0)",
+      backgroundColor:"rgb(255,255,255)",
+    }
   },
 ];
 
@@ -48,6 +108,9 @@ export type Settings = {
   raceId: string;
   race: RaceSchedule;
   otherPlace: ClockPoint;
+  logoImageFile:string;
+  logoForegroundColor:string;
+  logoBackgroundColor:string;
 };
 export const SETTINGS_DEFAULT: Settings = {
   raceId: RACES[0].id,
@@ -57,6 +120,9 @@ export const SETTINGS_DEFAULT: Settings = {
     point: RACES[0].place,
   },
   otherPlace: PLACE_DEFAULT,
+  logoImageFile:"/24h_lemans.png",
+  logoForegroundColor:"rgba(0,0,0,0.5)",
+  logoBackgroundColor:"rgba(255,255,255,0.5)",
 };
 export type SettingsInternal = {
   raceId: string;
@@ -95,6 +161,9 @@ export function loadSettings(): Settings {
         lat: internal.lat,
         lon: internal.lon,
       },
+      logoImageFile: race.logo.imageFile,
+      logoForegroundColor: race.logo.foregroundColor,
+      logoBackgroundColor: race.logo.backgroundColor,
     };
   } catch {
     return SETTINGS_DEFAULT;

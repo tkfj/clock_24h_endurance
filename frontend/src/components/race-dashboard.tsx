@@ -15,29 +15,27 @@ export default function RaceDashboard() {
   }, []);
 
   const settings = loadSettings();
-  const clock_race = settings.race;
-  const clock_view = settings.otherPlace;
-  const clocks = [clock_race.point, clock_view];
+  const clocks = [settings.race.point, settings.otherPlace];
 
   const raceSolarEvents = solarEventsInRangeWithPrev(
-    clock_race.start,
-    clock_race.end,
-    clock_race.point.lat,
-    clock_race.point.lon
+    settings.race.start,
+    settings.race.end,
+    settings.race.point.lat,
+    settings.race.point.lon
   );
 
   return (
     <div className="wrap">
       {/* 上：文字のレース時計 */}
       <section className="top">
-        <RaceClocks start={clock_race.start} end={clock_race.end} now={now} />
+        <RaceClocks start={settings.race.start} end={settings.race.end} now={now} logoImageFile={settings.logoImageFile} logoForegroundColor={settings.logoForegroundColor} logoBackgroundColor={settings.logoBackgroundColor} />
       </section>
 
       {/* 中：横幅いっぱいの進捗バー */}
       <section className="bar">
         <ProgressBarHost
-          start={clock_race.start}
-          end={clock_race.end}
+          start={settings.race.start}
+          end={settings.race.end}
           now={now}
           solarEvents={raceSolarEvents.events}
           solarInitialState={raceSolarEvents.initialState}
