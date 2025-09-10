@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 export default function FloatingSettingsButton() {
@@ -8,7 +9,7 @@ export default function FloatingSettingsButton() {
   if (path?.startsWith("/settings")) return null;
 
   return (
-    <a href="/settings" aria-label="Open settings" className="fab">
+    <Link href="/settings" aria-label="Open settings" className="fab">
       {/* 歯車SVG */}
       <svg
         version="1.0"
@@ -91,6 +92,6 @@ c514 -519 499 -507 636 -507 63 0 91 5 130 23 73 34 1390 1352 1426 1426 34
           }
         }
       `}</style>
-    </a>
+    </Link>
   );
 }

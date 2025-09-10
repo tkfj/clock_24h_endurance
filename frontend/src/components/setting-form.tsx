@@ -6,6 +6,7 @@ import {
   SettingsInternal,
 } from "@/lib/settings";
 import { Londrina_Outline } from "next/font/google";
+import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 
 const LS_KEY = "24hclock.settings.v1";
@@ -13,7 +14,7 @@ const LS_KEY = "24hclock.settings.v1";
 export default function SettingsForm() {
   const zones = useMemo(() => {
     try {
-      return (Intl as any).supportedValuesOf?.("timeZone") ?? [];
+      return Intl.supportedValuesOf("timeZone");
     } catch {
       return [];
     }
@@ -164,9 +165,9 @@ export default function SettingsForm() {
             ? "保存に失敗"
             : "自動保存"}
         </span>
-        <a href="/" style={{ marginLeft: "auto" }}>
+        <Link href="/" style={{ marginLeft: "auto" }}>
           ← 戻る
-        </a>
+        </Link>
       </div>
     </form>
   );
