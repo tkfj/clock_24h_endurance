@@ -54,44 +54,6 @@ c514 -519 499 -507 636 -507 63 0 91 5 130 23 73 34 1390 1352 1426 1426 34
           />
         </g>
       </svg>
-      <style jsx>{`
-        .fab {
-          position: fixed;
-          top: calc(12px + env(safe-area-inset-top));
-          right: calc(12px + env(safe-area-inset-right));
-          width: 44px;
-          height: 44px;
-          display: grid;
-          place-items: center;
-          border-radius: 9999px;
-          color: var(--foreground);
-          background: color-mix(in oklab, var(--background) 80%, transparent);
-          border: 1px solid
-            color-mix(in oklab, var(--foreground) 20%, transparent);
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
-          backdrop-filter: saturate(1.2) blur(6px);
-          z-index: 50;
-          text-decoration: none;
-          transition: transform 0.12s ease, box-shadow 0.12s ease,
-            background 0.12s ease;
-        }
-        .fab:hover {
-          transform: translateY(-1px);
-          box-shadow: 0 6px 16px rgba(0, 0, 0, 0.16);
-        }
-        .fab:active {
-          transform: translateY(0);
-        }
-        .fab:focus-visible {
-          outline: 2px solid currentColor;
-          outline-offset: 2px;
-        }
-        @media (prefers-reduced-motion: reduce) {
-          .fab {
-            transition: none;
-          }
-        }
-      `}</style>
     </Link>
   );
 }
