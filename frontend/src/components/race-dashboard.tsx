@@ -4,49 +4,43 @@ import { useEffect, useState } from "react";
 import ClockPanel from "@/components/clock-panel";
 import RaceClocks from "@/components/race-clocks";
 import ProgressBarHost from "./progress-host";
-import { ClockPoint } from "@/types/clock";
 import { solarEventsInRangeWithPrev } from "@/lib/solar";
-import { RaceSchedule } from "@/types/race";
+import { loadSettings } from "@/lib/settings";
 
-export default function RaceDashboard({
-  clocks,
-  race,
-}: {
-  clocks: ClockPoint[];
-  race: RaceSchedule;
-}) {
+export default function RaceDashboard() {
   const [now, setNow] = useState(new Date());
   useEffect(() => {
     const id = setInterval(() => setNow(new Date()), 50);
     return () => clearInterval(id);
   }, []);
 
-  const {
-    events: raceSolarEvents,
-    prevEvent: raceSolarEventPrev,
-    initialState: raceSolarInitialState,
-  } = solarEventsInRangeWithPrev(
-    race.start,
-    race.end,
-    race.point.lat,
-    race.point.lon
+  const settings = loadSettings();
+  const clock_race = settings.race;
+  const clock_view = settings.otherPlace;
+  const clocks = [clock_race.point, clock_view];
+
+  const raceSolarEvents = solarEventsInRangeWithPrev(
+    clock_race.start,
+    clock_race.end,
+    clock_race.point.lat,
+    clock_race.point.lon
   );
 
   return (
     <div className="wrap">
       {/* 上：文字のレース時計 */}
       <section className="top">
-        <RaceClocks start={race.start} end={race.end} now={now} />
+        <RaceClocks start={clock_race.start} end={clock_race.end} now={now} />
       </section>
 
       {/* 中：横幅いっぱいの進捗バー */}
       <section className="bar">
         <ProgressBarHost
-          start={race.start}
-          end={race.end}
+          start={clock_race.start}
+          end={clock_race.end}
           now={now}
-          solarEvents={raceSolarEvents}
-          solarInitialState={raceSolarInitialState}
+          solarEvents={raceSolarEvents.events}
+          solarInitialState={raceSolarEvents.initialState}
         />
       </section>
 

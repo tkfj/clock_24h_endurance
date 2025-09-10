@@ -7,6 +7,8 @@ export function useThemeColors() {
     bgColor: "#fafafa",
     acColor: "#fa1717",
     edColor: "#e9e9e9",
+    darkColor: "#171717",
+    lightColor: "#fafafa",
   });
 
   useEffect(() => {
@@ -17,6 +19,8 @@ export function useThemeColors() {
         bgColor: cs.getPropertyValue("--background").trim(),
         acColor: cs.getPropertyValue("--accent").trim(),
         edColor: cs.getPropertyValue("--edge").trim(),
+        darkColor: cs.getPropertyValue("--darkcolor").trim(),
+        lightColor: cs.getPropertyValue("--lightcolor").trim(),
       });
     };
 

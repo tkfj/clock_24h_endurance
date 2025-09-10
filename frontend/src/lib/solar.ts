@@ -153,7 +153,11 @@ export function solarEventsInRangeWithPrev(
   }
 ): SolarRangeResult {
   if (!(+toUTC >= +fromUTC)) {
-    return { events: [], prevEvent: null, initialState: null };
+    return {
+      events: [],
+      prevEvent: null,
+      initialState: null,
+    };
   }
 
   const ALT = -0.833;
@@ -277,7 +281,11 @@ export function solarEventsInRangeWithPrev(
     initialState = null;
   }
 
-  return { events, prevEvent, initialState };
+  return {
+    events,
+    prevEvent,
+    initialState,
+  };
 }
 
 export type StateKind =

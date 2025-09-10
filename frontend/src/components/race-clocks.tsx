@@ -39,7 +39,7 @@ function msToHMS(ms: number, isRemain: number) {
 }
 
 export default function RaceClocks({ start, end, now }: Props) {
-  const { fgColor, bgColor, acColor, edColor } = useThemeColors();
+  const { edColor, darkColor, lightColor } = useThemeColors();
   const within = +now >= +start && +now <= +end;
 
   const elapsed = +now - +start;
@@ -81,7 +81,6 @@ export default function RaceClocks({ start, end, now }: Props) {
           }}
         />
       </div>
-
       <div
         className={checker ? "checker" : font_mono.className}
         style={{
@@ -108,8 +107,8 @@ export default function RaceClocks({ start, end, now }: Props) {
         .checker {
           height: 9.2vw;
           --cell: 2.3vw;
-          --dark: bg;
-          --light: fg;
+          --dark: ${darkColor};
+          --light: ${lightColor};
           /* 市松模様 左上を黒にするために90度回転*/
           background: repeating-conic-gradient(
               from 90deg,
