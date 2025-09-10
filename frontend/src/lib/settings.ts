@@ -39,6 +39,12 @@ const place_nur: ClockPoint = {
   lat: 50.3355987,
   lon: 6.947032,
 };
+const place_daytona: ClockPoint = {
+  label: "daytona",
+  tz: "America/New_York",
+  lat: 29.1876752,
+  lon: -81.0729835,
+};
 export const RACES: Race[] = [
   {
     id: "2026-lemans24",
@@ -62,6 +68,18 @@ export const RACES: Race[] = [
     place: place_spa,
     logo: {
       imageFile:"/crowdstrike-24-hours-spa-logo.svg",
+      foregroundColor:"rgba(0,0,0,0)",
+      backgroundColor:"rgb(255,255,255)",
+    }
+  },
+  {
+    id: "2025-daytona24",
+    name: "2025 - ROREX 24 AT DAYTONA",
+    start: new Date("2025-01-25T13:40:00-05:00"),
+    end: new Date("2025-01-26T13:40:00-05:00"),
+    place: place_daytona,
+    logo: {
+      imageFile:"/R24Logo_218x180.png",
       foregroundColor:"rgba(0,0,0,0)",
       backgroundColor:"rgb(255,255,255)",
     }
