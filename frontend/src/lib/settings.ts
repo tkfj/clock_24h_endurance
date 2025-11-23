@@ -61,7 +61,7 @@ export const RACES: Race[] = [
   {
     id: "2026-daytona24",
     name: "2026 - ROREX 24 AT DAYTONA",
-    start: new Date("2026-01-24T13:40:00-05:00"), //時間は前年踏襲で仮置き
+    start: new Date("2026-01-24T13:40:00-05:00"), //FIX済
     end: new Date("2026-01-25T13:40:00-05:00"),
     place: place_daytona,
     logo: {
