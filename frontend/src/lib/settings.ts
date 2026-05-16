@@ -87,8 +87,8 @@ export const RACES: Race[] = [
   {
     id: "2026-nur24",
     name: "2026 - ADAC RAVENOL 24h Nürburgring",
-    start: new Date("2026-05-16T14:30:00+02:00"), //時間は昨年踏襲で仮置き(開催が1か月早まるので変わるかもな)
-    end: new Date("2026-05-17T14:30:00+02:00"),
+    start: new Date("2026-05-16T15:00:00+02:00"), //時間は昨年踏襲で仮置き(開催が1か月早まるので変わるかもな)
+    end: new Date("2026-05-17T15:00:00+02:00"),
     place: place_nur,
     logo: {
       imageFile: "/ADAC_Ravenol_24h_2024_CMYK_1c_trans.png",
