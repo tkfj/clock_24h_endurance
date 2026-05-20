@@ -49,8 +49,8 @@ export const RACES: Race[] = [
   {
     id: "2026-lemans24",
     name: "2026 - 24 Heures du Mans",
-    start: new Date("2026-06-13T14:00:00+02:00"), //FIX済
-    end: new Date("2026-06-14T14:00:00+02:00"),
+    start: new Date("2026-06-13T16:00:00+02:00"), //FIX済
+    end: new Date("2026-06-14T16:00:00+02:00"),
     place: place_lemans,
     logo: {
       imageFile: "/24h_lemans.png",
